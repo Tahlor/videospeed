@@ -1,11 +1,11 @@
 {
   "name": "Video Speed Controller",
   "short_name": "videospeed",
-  "version": "0.7.3",
+  "version": "1.7.3",
   "manifest_version": 3,
   "minimum_chrome_version": "89",
   "description": "Speed up, slow down, advance and rewind HTML5 audio/video with shortcuts",
-  "homepage_url": "https://github.com/igrigorik/videospeed",
+  "homepage_url": "https://github.com/tahlor/videospeed",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -35,11 +35,13 @@
         "https://meet.google.com/*"
       ],
       "css": ["inject.css"],
-      "js": ["inject.js"]
+      "js": ["always_visible.js", "inject.js"]
+
     }
   ],
   "web_accessible_resources": [{
     "resources": ["inject.css", "shadow.css"],
+
     "matches": ["http://*/*", "https://*/*", "file:///*"]
   }]
 }

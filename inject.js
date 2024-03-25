@@ -710,15 +710,43 @@ function initializeNow(document) {
   }
   documentAndShadowRootObserver.observe(document, documentAndShadowRootObserverOptions);
 
-  const mediaTagSelector = tc.settings.audioBoolean ? "video,audio" : "video";
-  mediaTags = Array.from(document.querySelectorAll(mediaTagSelector));
+  // ORIGINAL SELECTOR
 
-  document.querySelectorAll("*").forEach((element) => {
+  // const mediaTagSelector = tc.settings.audioBoolean ? "video,audio,media,player" : "video";
+  // mediaTags = Array.from(document.querySelectorAll(mediaTagSelector));
+  //
+  // document.querySelectorAll("*").forEach((element) => {
+  //   if (element.shadowRoot) {
+  //     documentAndShadowRootObserver.observe(element.shadowRoot, documentAndShadowRootObserverOptions);
+  //     mediaTags.push(...element.shadowRoot.querySelectorAll(mediaTagSelector));
+  //   };
+  // });
+
+
+  /// MORE EXHAUSTIVE
+const mightBeMedia = (element) => 'playbackRate' in element || 'currentTime' in element || 'duration' in element;
+
+// Include a check for potential media elements based on properties
+document.querySelectorAll("*").forEach((element) => {
+    // Check current element for media properties
+    if (mightBeMedia(element)) {
+        mediaTags.push(element);
+    }
+
+    // If the element has a shadow root, set up an observer and search within it
     if (element.shadowRoot) {
-      documentAndShadowRootObserver.observe(element.shadowRoot, documentAndShadowRootObserverOptions);
-      mediaTags.push(...element.shadowRoot.querySelectorAll(mediaTagSelector));
-    };
-  });
+        documentAndShadowRootObserver.observe(element.shadowRoot, documentAndShadowRootObserverOptions);
+        element.shadowRoot.querySelectorAll("*").forEach((shadowElement) => {
+            if (mightBeMedia(shadowElement)) {
+                mediaTags.push(shadowElement);
+            }
+        });
+    }
+});
+
+mediaTags = Array.from(new Set(mediaTags));
+/// END MORE EXHAUSTIVE
+
 
   mediaTags.forEach(function (video) {
     video.vsc = new tc.videoController(video);
